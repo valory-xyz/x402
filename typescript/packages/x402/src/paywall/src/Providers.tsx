@@ -21,7 +21,7 @@ export function Providers({ children }: ProvidersProps) {
   const paymentReq = Array.isArray(paymentRequirements)
     ? paymentRequirements[0]
     : paymentRequirements;
-  const paymentReqNetwork = paymentReq?.network as "gnosis" | "base";
+  const paymentReqNetwork = paymentReq?.network as keyof typeof SUPPORTED_NETWORKS;
 
   return (
     <OnchainKitProvider

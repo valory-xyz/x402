@@ -46,7 +46,7 @@ export function PaywallApp() {
   const paymentReq = Array.isArray(x402?.paymentRequirements)
     ? x402.paymentRequirements[0]
     : x402?.paymentRequirements;
-  const paymentReqNetwork = paymentReq?.network as "gnosis" | "optimism" | "base";
+  const paymentReqNetwork = paymentReq?.network as keyof typeof SUPPORTED_NETWORKS;
 
   const paymentChain = testnet
     ? baseSepolia
