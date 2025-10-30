@@ -14,6 +14,7 @@ export const NetworkSchema = z.enum([
   "polygon-amoy",
   "peaq",
   "gnosis",
+  "optimism",
 ]);
 export type Network = z.infer<typeof NetworkSchema>;
 
@@ -30,6 +31,7 @@ export const SupportedEVMNetworks: Network[] = [
   "polygon-amoy",
   "peaq",
   "gnosis",
+  "optimism",
 ];
 export const EvmNetworkToChainId = new Map<Network, number>([
   ["base-sepolia", 84532],
@@ -43,6 +45,7 @@ export const EvmNetworkToChainId = new Map<Network, number>([
   ["polygon-amoy", 80002],
   ["peaq", 3338],
   ["gnosis", 100],
+  ["optimism", 10],
 ]);
 
 // svm

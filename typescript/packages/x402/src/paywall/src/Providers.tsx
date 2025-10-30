@@ -1,6 +1,6 @@
 import { OnchainKitProvider } from "@coinbase/onchainkit";
 import type { ReactNode } from "react";
-import { base, gnosis, baseSepolia } from "viem/chains";
+import { base, baseSepolia } from "viem/chains";
 import "./window.d.ts";
 import { SUPPORTED_NETWORKS } from "./constants.js";
 

@@ -1,4 +1,4 @@
-import { base, gnosis } from "viem/chains";
+import { base, gnosis, optimism } from "viem/chains";
 
 export const SUPPORTED_NETWORKS = {
   gnosis: {
@@ -8,5 +8,9 @@ export const SUPPORTED_NETWORKS = {
   base: {
     chain: base,
     name: "Base",
+  },
+  optimism: {
+    chain: optimism,
+    name: "OP Mainnet",
   },
 } as const;
