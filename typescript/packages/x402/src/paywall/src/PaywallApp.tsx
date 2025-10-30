@@ -20,6 +20,7 @@ import { getUSDCBalance } from "../../shared/evm";
 import { Spinner } from "./Spinner";
 import { useOnrampSessionToken } from "./useOnrampSessionToken";
 import { ensureValidAmount } from "./utils";
+import { SUPPORTED_NETWORKS } from "./constants";
 
 /**
  * Main Paywall App Component
@@ -41,9 +42,19 @@ export function PaywallApp() {
   const x402 = window.x402;
   const amount = x402.amount || 0;
   const testnet = x402.testnet ?? true;
-  const paymentChain = testnet ? baseSepolia : base;
-  const chainName = testnet ? "Base Sepolia" : "Base";
-  const network = testnet ? "base-sepolia" : "base";
+
+  const paymentReq = Array.isArray(x402?.paymentRequirements)
+    ? x402.paymentRequirements[0]
+    : x402?.paymentRequirements;
+  const paymentReqNetwork = paymentReq?.network as "gnosis" | "base";
+
+  const paymentChain = testnet
+    ? baseSepolia
+    : (SUPPORTED_NETWORKS[paymentReqNetwork]?.chain ?? base);
+  const chainName = testnet
+    ? "Base Sepolia"
+    : (SUPPORTED_NETWORKS[paymentReqNetwork]?.name ?? "Base");
+  const network = testnet ? "base-sepolia" : (paymentReqNetwork ?? "base");
   const showOnramp = Boolean(!testnet && isConnected && x402.sessionTokenEndpoint);
 
   useEffect(() => {
