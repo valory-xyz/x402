@@ -1,4 +1,4 @@
-import { createPublicClient, createWalletClient, http, publicActions } from "viem";
+import { createPublicClient, createWalletClient, http, nonceManager, publicActions } from "viem";
 import type {
   Chain,
   Transport,
@@ -50,6 +50,15 @@ export type ConnectedClient<
 export type EvmSigner = SignerWallet<Chain, Transport, Account> | LocalAccount;
 
 /**
+ * Gets the RPC URL for a given network from environment variables
+ * @param network - The network to get the RPC URL for
+ * @returns The RPC URL as a string, or undefined if not set
+ */
+function getRpcUrlForNetwork(network: string): string | undefined {
+  return process.env[`RPC_URL_${network.toUpperCase().replace(/-/g, "_")}`];
+}
+
+/**
  * Creates a public client configured for the specified network
  *
  * @param network - The network to connect to
@@ -61,7 +70,7 @@ export function createConnectedClient(
   const chain = getChainFromNetwork(network);
   return createPublicClient({
     chain,
-    transport: http(),
+    transport: http(getRpcUrlForNetwork(network)),
   }).extend(publicActions);
 }
 
@@ -108,8 +117,8 @@ export function createSigner(network: string, privateKey: Hex): SignerWallet<Cha
   const chain = getChainFromNetwork(network);
   return createWalletClient({
     chain,
-    transport: http(),
-    account: privateKeyToAccount(privateKey),
+    transport: http(getRpcUrlForNetwork(network)),
+    account: privateKeyToAccount(privateKey, { nonceManager }),
   }).extend(publicActions);
 }
 
