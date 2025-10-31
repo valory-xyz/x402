@@ -8,18 +8,17 @@ import {
 } from "@coinbase/onchainkit/wallet";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createPublicClient, formatUnits, http, publicActions } from "viem";
-import { base, baseSepolia } from "viem/chains";
 import { useAccount, useSwitchChain, useWalletClient } from "wagmi";
 
 import type { PaymentRequirements } from "../../types/verify";
 import { exact } from "../../schemes";
 import { getUSDCBalance } from "../../shared/evm";
-import type { Network } from "../../types/shared";
 
 import { Spinner } from "./Spinner";
 import { useOnrampSessionToken } from "./useOnrampSessionToken";
 import { ensureValidAmount } from "./utils";
 import { getNetworkDisplayName, isTestnetNetwork } from "./paywallUtils";
+import { SUPPORTED_NETWORKS } from "./constants";
 
 type EvmPaywallProps = {
   paymentRequirement: PaymentRequirements;
@@ -52,8 +51,9 @@ export function EvmPaywall({ paymentRequirement, onSuccessfulResponse }: EvmPayw
       ? x402.amount
       : Number(paymentRequirement.maxAmountRequired ?? 0) / 1_000_000;
 
-  const network = paymentRequirement.network as Network;
-  const paymentChain = network === "base-sepolia" ? baseSepolia : base;
+  const paymentReqNetwork = paymentRequirement.network as keyof typeof SUPPORTED_NETWORKS;
+  const network = paymentReqNetwork;
+  const paymentChain = SUPPORTED_NETWORKS[paymentReqNetwork]?.chain;
   const chainId = paymentChain.id;
   const chainName = getNetworkDisplayName(network);
   const testnet = isTestnetNetwork(network);

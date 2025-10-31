@@ -1,9 +1,9 @@
 import { OnchainKitProvider } from "@coinbase/onchainkit";
 import type { ReactNode } from "react";
-import { base, baseSepolia } from "viem/chains";
 
 import { choosePaymentRequirement, isEvmNetwork } from "./paywallUtils";
 import "./window.d.ts";
+import { SUPPORTED_NETWORKS } from "./constants.js";
 
 type ProvidersProps = {
   children: ReactNode;
@@ -19,12 +19,13 @@ type ProvidersProps = {
 export function Providers({ children }: ProvidersProps) {
   const { testnet = true, cdpClientKey, appName, appLogo, paymentRequirements } = window.x402;
   const selectedRequirement = choosePaymentRequirement(paymentRequirements, testnet);
+  const paymentReqNetwork = selectedRequirement.network as keyof typeof SUPPORTED_NETWORKS;
 
-  if (!isEvmNetwork(selectedRequirement.network)) {
+  if (!isEvmNetwork(paymentReqNetwork)) {
     return <>{children}</>;
   }
 
-  const chain = selectedRequirement.network === "base-sepolia" ? baseSepolia : base;
+  const chain = SUPPORTED_NETWORKS[paymentReqNetwork].chain;
 
   return (
     <OnchainKitProvider

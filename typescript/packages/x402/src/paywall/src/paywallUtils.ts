@@ -86,6 +86,10 @@ export function getNetworkDisplayName(network: Network): string {
       return "Solana";
     case "solana-devnet":
       return "Solana Devnet";
+    case "gnosis":
+      return "Gnosis";
+    case "optimism":
+      return "OP Mainnet";
     default:
       return network;
   }
