@@ -1,4 +1,4 @@
-import { createPublicClient, createWalletClient, http, publicActions } from "viem";
+import { createPublicClient, createWalletClient, http, nonceManager, publicActions } from "viem";
 import type {
   Chain,
   Transport,
@@ -25,6 +25,8 @@ import {
   abstract,
   abstractTestnet,
   story,
+  optimism,
+  gnosis,
 } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
 import { Hex } from "viem";
@@ -52,6 +54,15 @@ export type ConnectedClient<
 export type EvmSigner = SignerWallet<Chain, Transport, Account> | LocalAccount;
 
 /**
+ * Gets the RPC URL for a given network from environment variables
+ * @param network - The network to get the RPC URL for
+ * @returns The RPC URL as a string, or undefined if not set
+ */
+function getRpcUrlForNetwork(network: string): string | undefined {
+  return process.env[`RPC_URL_${network.toUpperCase().replace(/-/g, "_")}`];
+}
+
+/**
  * Creates a public client configured for the specified network
  *
  * @param network - The network to connect to
@@ -64,7 +75,7 @@ export function createConnectedClient(
 
   return createPublicClient({
     chain,
-    transport: http(),
+    transport: http(getRpcUrlForNetwork(network)),
   }).extend(publicActions);
 }
 
@@ -112,8 +123,8 @@ export function createSigner(network: string, privateKey: Hex): SignerWallet<Cha
 
   const walletClient = createWalletClient({
     chain,
-    transport: http(),
-    account: privateKeyToAccount(privateKey),
+    transport: http(getRpcUrlForNetwork(network)),
+    account: privateKeyToAccount(privateKey, { nonceManager }),
   });
 
   if (isZkStackChain(chain)) {
@@ -229,6 +240,10 @@ export function getChainFromNetwork(network: string | undefined): Chain {
       return iotex;
     case "iotex-testnet":
       return iotexTestnet;
+    case "optimism":
+      return optimism;
+    case "gnosis":
+      return gnosis;
     default:
       throw new Error(`Unsupported network: ${network}`);
   }
