@@ -1,4 +1,4 @@
-import base64
+import asyncio
 import json
 import logging
 from typing import Any, Callable, Optional, get_args, cast
@@ -45,6 +45,8 @@ def require_payment(
     resource: Optional[str] = None,
     paywall_config: Optional[PaywallConfig] = None,
     custom_paywall_html: Optional[str] = None,
+    async_settlement: Optional[bool] = False,
+    settlement_timeout_seconds: Optional[int] = 300,
 ):
     """Generate a FastAPI middleware that gates payments for an endpoint.
 
@@ -67,6 +69,8 @@ def require_payment(
         paywall_config (Optional[PaywallConfig], optional): Configuration for paywall UI customization.
             Includes options like cdp_client_key, app_name, app_logo, session_token_endpoint.
         custom_paywall_html (Optional[str], optional): Custom HTML to display for paywall instead of default.
+        async_settlement (Optional[bool], optional): Whether to settle payments asynchronously. Defaults to False.
+        settlement_timeout_seconds (Optional[int], optional): Timeout for settlement in seconds. Defaults to 300.
 
     Returns:
         Callable: FastAPI middleware function that checks for valid payment before processing requests
@@ -197,22 +201,25 @@ def require_payment(
         if response.status_code < 200 or response.status_code >= 300:
             return response
 
-        # Settle the payment
-        try:
-            settle_response = await facilitator.settle(
-                payment, selected_payment_requirements
-            )
-            if settle_response.success:
-                response.headers["X-PAYMENT-RESPONSE"] = base64.b64encode(
-                    settle_response.model_dump_json(by_alias=True).encode("utf-8")
-                ).decode("utf-8")
-            else:
-                return x402_response(
-                    "Settle failed: "
-                    + (settle_response.error_reason or "Unknown error")
+        async def _settle_payment():
+            try:
+                settle_response = await asyncio.wait_for(
+                    facilitator.settle(payment, selected_payment_requirements),
+                    timeout=settlement_timeout_seconds,
                 )
-        except Exception:
-            return x402_response("Settle failed")
+                if not settle_response.success:
+                    logger.warning(
+                    "Settle failed: %s",
+                    settle_response.error_reason or "Unknown error",
+                    )
+            except asyncio.TimeoutError:
+                logger.warning(f"Settle timed out after 300 seconds for {payment=}")
+            except Exception:
+                logger.exception(f"Settle failed for {payment=}")
+
+        settlement_task = asyncio.create_task(_settle_payment())
+        if not async_settlement:
+            await settlement_task
 
         return response
 
