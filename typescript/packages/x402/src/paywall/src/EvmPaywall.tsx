@@ -51,11 +51,7 @@ export function EvmPaywall({ paymentRequirement, onSuccessfulResponse }: EvmPayw
       ? x402.amount
       : Number(paymentRequirement.maxAmountRequired ?? 0) / 1_000_000;
 
-  const paymentReq = Array.isArray(x402?.paymentRequirements)
-    ? x402.paymentRequirements[0]
-    : x402?.paymentRequirements;
-  const paymentReqNetwork = paymentReq?.network as keyof typeof SUPPORTED_NETWORKS;
-
+  const paymentReqNetwork = paymentRequirement.network as keyof typeof SUPPORTED_NETWORKS;
   const network = paymentReqNetwork;
   const paymentChain = SUPPORTED_NETWORKS[paymentReqNetwork]?.chain;
   const chainId = paymentChain.id;
