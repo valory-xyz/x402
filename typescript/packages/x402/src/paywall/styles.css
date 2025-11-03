@@ -47,8 +47,8 @@ h6 {
   --secondary-text-color: #4b5563;
   --details-background-color: #f9fafb;
   --details-background-color-hover: #f3f4f6;
-  --button-primary-color: #2563eb;
-  --button-primary-hover-color: #1d4ed8;
+  --button-primary-color: #9334eb;
+  --button-primary-hover-color: rgba(88, 28, 135, 0.902);
   --button-secondary-color: #eef0f3;
   --button-secondary-hover-color: #e9ebee;
   --button-positive-color: #059669;
