@@ -1,3 +1,13 @@
+# This is a fork of the original x402 repository
+
+It contains the following changes from the original: ([full diff](https://github.com/coinbase/x402/compare/main...valory-xyz:x402:main))
+- Support for Optimism and Gnosis chains.
+  - In `x402` Python package
+  - In `x402` Typescript package
+  - In `EvmPaywall` React app and HTML template
+- Support for asynchronous payment settlement in the x402 middleware for fastapi server.
+
+
 # x402 payments protocol
 
 > "1 line of code to accept digital dollars. No fee, 2 second settlement, $0.001 minimum payment."
