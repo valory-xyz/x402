@@ -173,7 +173,7 @@ export function EvmPaywall({ paymentRequirement, onSuccessfulResponse }: EvmPayw
       const paymentHeader: string = exact.evm.encodePayment(initialPayment);
 
       setStatus("Requesting content with payment...");
-      const response = await fetch(x402.currentUrl, {
+      const response = await fetch(window.location.href, {
         headers: {
           "X-PAYMENT": paymentHeader,
           "Access-Control-Expose-Headers": "X-PAYMENT-RESPONSE",
@@ -193,7 +193,7 @@ export function EvmPaywall({ paymentRequirement, onSuccessfulResponse }: EvmPayw
 
           retryPayment.x402Version = errorData.x402Version;
           const retryHeader = exact.evm.encodePayment(retryPayment);
-          const retryResponse = await fetch(x402.currentUrl, {
+          const retryResponse = await fetch(window.location.href, {
             headers: {
               "X-PAYMENT": retryHeader,
               "Access-Control-Expose-Headers": "X-PAYMENT-RESPONSE",
@@ -293,7 +293,7 @@ export function EvmPaywall({ paymentRequirement, onSuccessfulResponse }: EvmPayw
             <div className="opacity-80 text-sm">
               {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : ""}
             </div>
-            <button className="button" style={{width: 'max-content'}} onClick={() => disconnect()}>Disconnect</button>
+            <button className="button" style={{ width: 'max-content' }} onClick={() => disconnect()}>Disconnect</button>
           </div>
         )}
         {isConnected && (
