@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { injected, coinbaseWallet } from "@wagmi/connectors";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { optimism, gnosis } from "viem/chains";
+import { base, optimism, gnosis } from "viem/chains";
 
 import { choosePaymentRequirement, isEvmNetwork } from "./paywallUtils";
 import "./window.d.ts";
@@ -26,16 +26,17 @@ export function Providers({ children }: ProvidersProps) {
     return <>{children}</>;
   }
 
-  if (selectedRequirement.network !== "optimism" && selectedRequirement.network !== "gnosis") {
+  if (selectedRequirement.network !== "base" && selectedRequirement.network !== "optimism" && selectedRequirement.network !== "gnosis") {
     return <>{children}</>;
   }
 
   const connectorList = [injected(), coinbaseWallet({ appName: appName || "x402 Paywall" })];
 
   const config = createConfig({
-    chains: [optimism, gnosis] as const,
+    chains: [base, optimism, gnosis] as const,
     connectors: connectorList,
     transports: {
+      [base.id]: http(),
       [optimism.id]: http(),
       [gnosis.id]: http(),
     },

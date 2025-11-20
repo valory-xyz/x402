@@ -1,7 +1,7 @@
 import { FundButton, getOnrampBuyUrl } from "@coinbase/onchainkit/fund";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createPublicClient, formatUnits, http, publicActions } from "viem";
-import { optimism, gnosis } from "viem/chains";
+import { base, optimism, gnosis } from "viem/chains";
 import { useAccount, useSwitchChain, useWalletClient, useConnect, useDisconnect, useConnectors } from "wagmi";
 
 import type { PaymentRequirements } from "../../types/verify";
@@ -68,7 +68,18 @@ export function EvmPaywall({ paymentRequirement, onSuccessfulResponse }: EvmPayw
       ? x402.amount
       : Number(paymentRequirement.maxAmountRequired ?? 0) / 1_000_000;
   const network = paymentRequirement.network as Network;
-  const paymentChain = network === "optimism" ? optimism : gnosis;
+  const paymentChain = (() => {
+    switch (network) {
+      case "base":
+        return base;
+      case "optimism":
+        return optimism;
+      case "gnosis":
+        return gnosis;
+      default:
+        return gnosis;
+    }
+  })();
   const chainId = paymentChain.id;
   const chainName = getNetworkDisplayName(network);
   const testnet = isTestnetNetwork(network);
