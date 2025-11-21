@@ -77,7 +77,7 @@ export function EvmPaywall({ paymentRequirement, onSuccessfulResponse }: EvmPayw
       case "gnosis":
         return gnosis;
       default:
-        return gnosis;
+        throw new Error(`Unsupported network: ${network}`);
     }
   })();
   const chainId = paymentChain.id;
