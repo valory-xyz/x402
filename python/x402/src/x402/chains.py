@@ -85,6 +85,13 @@ KNOWN_TOKENS = {
             "name": "USD Coin",
             "decimals": 6,
             "version": "2",
+        },
+        {
+            "human_name": "usdc.e",
+            "address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+            "name": "USD Coin (PoS)",
+            "decimals": 6,
+            "version": "1",
         }
     ],
 }
