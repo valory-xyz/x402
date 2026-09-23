@@ -23,4 +23,11 @@ While implementation details vary by network, facilitators MUST enforce security
 - Destination correctness: the receiver MUST match the `payTo` derived destination for the specified `asset`.
 - Amount exactness: the transferred amount MUST equal `maxAmountRequired`.
 
-Network-specific rules and exact instruction layouts are defined in the per-network scheme documents. For Solana (SVM), see `scheme_exact_svm.md`.
+### Nano (DAG-L1)
+
+- No fee payer exists (feeless rail): verification reads from the ledger, not from the request body.
+- Destination correctness: the block's `link_as_account` MUST equal the advertised `payTo`.
+- Amount exactness: the transferred amount MUST be `>= maxAmountRequired`.
+- Finality threshold: `cemented` is the seller-picked default; a facilitator MUST NOT report a non-cemented block as `paid`.
+
+Network-specific rules and exact instruction layouts are defined in the per-network scheme documents. For Solana (SVM), see `scheme_exact_svm.md`. For Nano, see `scheme_exact_nano.md`.
